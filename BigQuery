@@ -1,0 +1,32 @@
+from google.cloud import bigquery
+
+# Initialize BigQuery client
+client = bigquery.Client()
+
+# Path to your SQL file or inline query
+query = """
+create or replace external table globe-edo-mmops-dev.cmg_cia_raw.bp_churn_mobile_ext (
+-- Put the table details here
+) OPTIONS (
+  format = 'CSV',
+  uris = ['gs://cmg-cia-buckets/churn/BP_Churn_Mobile/*.csv'],   ##Get from GCS
+  skip_leading_rows = 1, -- Uncomment this if your files have a header row
+  field_delimiter = ','
+  --,quote = '""'
+  ,allow_quoted_newlines = true
+);
+
+
+create or replace table globe-edo-mmops-dev.cmg_cia_raw.bp_churn_mobile as 
+( -- Get details of the query above);
+
+"""
+
+# Run the query
+query_job = client.query(query)
+
+# Wait for job to finish
+results = query_job.result()
+
+# Print results
+print(f"⭐ Data loaded successfully")
